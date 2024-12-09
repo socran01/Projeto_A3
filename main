@@ -1,0 +1,724 @@
+import java.sql.SQLException;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) throws SQLException {
+
+        int teste = 0;
+        int opcao;
+
+        Scanner input = new Scanner(System.in);
+
+        while (teste != 4) {
+            System.out.println("\nMENU PRINCIPAL:");
+            System.out.println("1. Cadastro de Fornecedores");
+            System.out.println("2. Cadastro de Funcionários");
+            System.out.println("3. Cadastro de Produtos");
+            System.out.println("4. Sair");
+            System.out.print("Digite a sua opção: ");
+            teste = input.nextInt();
+
+            switch (teste) {
+                case 1:
+                    opcao = 0;
+                    while (opcao != 4) {
+                        System.out.println("\nCADASTRO DE FORNECEDORES:");
+                        System.out.println("1. Cadastrar fornecedor");
+                        System.out.println("2. Editar fornecedor");
+                        System.out.println("3. Deletar fornecedor");
+                        System.out.println("4. Voltar");
+                        System.out.print("Digite a sua opção: ");
+                        opcao = input.nextInt();
+
+                        switch (opcao) {
+                            case 1:
+                                Fornecedor.mostrarFornecedor();
+                                Fornecedor.cadastrarFornecedor();
+                                break;
+                            case 2:
+                                Fornecedor.mostrarFornecedor();
+                                Fornecedor.editarFornecedor();
+                                break;
+                            case 3:
+                                Fornecedor.mostrarFornecedor();
+                                Fornecedor.deletarFornecedor();
+                                break;
+                            case 4:
+                                System.out.println("Voltando ao menu principal...");
+                                break;
+                            default:
+                                System.out.println("Opção inválida. Tente novamente.");
+                        }
+                    }
+                    break;
+
+                case 2:
+                    opcao = 0;
+                    while (opcao != 4) {
+                        System.out.println("\nCADASTRO DE FUNCIONÁRIOS:");
+                        System.out.println("1. Cadastrar funcionário");
+                        System.out.println("2. Editar funcionário");
+                        System.out.println("3. Deletar funcionário");
+                        System.out.println("4. Voltar");
+                        System.out.print("Digite a sua opção: ");
+                        opcao = input.nextInt();
+
+                        switch (opcao) {
+                            case 1:
+                                Funcionario.mostrarFuncionario();
+                                Funcionario.cadastrarFuncionario();
+                                break;
+                            case 2:
+                                Funcionario.mostrarFuncionario();
+                                Funcionario.editarFuncionario();
+                                break;
+                            case 3:
+                                Funcionario.mostrarFuncionario();
+                                Funcionario.deletarFuncionario();
+                                break;
+                            case 4:
+                                System.out.println("Voltando ao menu principal...");
+                                break;
+                            default:
+                                System.out.println("Opção inválida. Tente novamente.");
+                        }
+                    }
+                    break;
+
+                case 3:
+                    opcao = 0;
+                    while (opcao != 4) {
+                        System.out.println("\nCADASTRO DE PRODUTOS:");
+                        System.out.println("1. Cadastrar produto");
+                        System.out.println("2. Editar produto");
+                        System.out.println("3. Deletar produto");
+                        System.out.println("4. Voltar");
+                        System.out.print("Digite a sua opção: ");
+                        opcao = input.nextInt();
+
+                        switch (opcao) {
+                            case 1:
+                                Produto.mostrarProduto();
+                                Produto.cadastrarProduto();
+                                break;
+                            case 2:
+                                Produto.mostrarProduto();
+                                Produto.editarProduto();
+                                break;
+                            case 3:
+                                Produto.mostrarProduto();
+                                Produto.deletarProduto();
+                                break;
+                            case 4:
+                                System.out.println("Voltando ao menu principal...");
+                                break;
+                            default:
+                                System.out.println("Opção inválida. Tente novamente.");
+                        }
+                    }
+                    break;
+
+                case 4:
+                    System.out.println("Obrigado por usar o sistema. Até a próxima!");
+                    break;
+
+                default:
+                    System.out.println("Opção inválida. Tente novamente.");
+            }
+        }
+    }
+}
+----------------------------------------------------------------------------------------------------------------------------
+fornecedor
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
+import java.util.ArrayList;
+
+class Fornecedor {
+    private int idFornecedor;
+    private String nomeFornecedor;
+    private String endereco;
+    private String telefone;
+
+    private static ArrayList<Fornecedor> listaFornecedor = new ArrayList<>();
+    private static int contadorId = 1;
+    private static Scanner input = new Scanner(System.in);
+
+    public Fornecedor() {
+    }
+
+    public Fornecedor(String nomeFornecedor, String endereco, String telefone) {
+        this.idFornecedor = contadorId++;
+        this.nomeFornecedor = nomeFornecedor;
+        this.endereco = endereco;
+        this.telefone = telefone;
+    }
+
+    public static void cadastrarFornecedor() {
+        System.out.print("Digite o nome do Fornecedor: ");
+        String nomeFornecedor = input.nextLine();
+
+        System.out.print("Digite o endereço do Fornecedor: ");
+        String endereco = input.nextLine();
+
+        System.out.print("Digite o telefone do Fornecedor: ");
+        String telefone = input.nextLine();
+
+        Fornecedor novoFornecedor = new Fornecedor(nomeFornecedor, endereco, telefone);
+        listaFornecedor.add(novoFornecedor);
+
+        String sql = "INSERT INTO fornecedor (nomeFornecedor, endereco, telefone) " +
+                "VALUES ('" + nomeFornecedor + "', '" + endereco + "', '" + telefone + "');";
+        System.out.println("Fornecedor cadastrado com sucesso! ID: " + novoFornecedor.idFornecedor);
+
+        boolean salvo = ConexaoBD.salvar(sql);
+
+        if (salvo) {
+            System.out.println("\nFornecedor cadastrado com sucesso!\n");
+        } else {
+            System.out.println("\nProblemas ao adicionar o fornecedor!\n");
+        }
+    }
+
+    public static void mostrarFornecedor() throws SQLException {
+        String sql = "SELECT * FROM fornecedor;";
+        ResultSet resultado = ConexaoBD.buscar(sql);
+
+        listaFornecedor = new ArrayList<>(); // Limpar lista
+        while (resultado != null && resultado.next()) {
+            Fornecedor fornecedorEncontrado = new Fornecedor();
+            fornecedorEncontrado.idFornecedor = resultado.getInt("idFornecedor");
+            fornecedorEncontrado.nomeFornecedor = resultado.getString("nomeFornecedor");
+            fornecedorEncontrado.endereco = resultado.getString("endereco");
+            fornecedorEncontrado.telefone = resultado.getString("telefone");
+            listaFornecedor.add(fornecedorEncontrado);
+        }
+
+        System.out.println("\nFORNECEDORES CADASTRADOS:");
+
+        if (listaFornecedor.isEmpty()) {
+            System.out.println("Nenhum fornecedor cadastrado.");
+        } else {
+            for (Fornecedor fornecedor : listaFornecedor) {
+                System.out.println("ID: " + fornecedor.idFornecedor);
+                System.out.println("Nome: " + fornecedor.nomeFornecedor);
+                System.out.println("Endereço: " + fornecedor.endereco);
+                System.out.println("Telefone: " + fornecedor.telefone);
+                System.out.println("-------------------------------");
+            }
+        }
+    }
+
+    public static void deletarFornecedor() {
+        System.out.print("Digite o ID do fornecedor que você deseja deletar: ");
+        int fornecedorExcluido = input.nextInt();
+        String sql = "DELETE FROM fornecedor WHERE idFornecedor = " + fornecedorExcluido;
+        boolean dadoExcluido = ConexaoBD.deletar(sql);
+
+        if (dadoExcluido) {
+            // Remover da lista local após excluir do banco
+            boolean encontrado = false;
+            for (int i = 0; i < listaFornecedor.size(); i++) {
+                if (listaFornecedor.get(i).idFornecedor == fornecedorExcluido) {
+                    listaFornecedor.remove(i);
+                    System.out.println("Fornecedor removido com sucesso!");
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            if (!encontrado) {
+                System.out.println("Fornecedor não encontrado na lista local.");
+            }
+        } else {
+            System.out.println("Problemas ao excluir o fornecedor no banco de dados!");
+        }
+    }
+
+    public static void editarFornecedor() throws SQLException {
+        Scanner entrada = new Scanner(System.in);
+        if (listaFornecedor.isEmpty()) {
+            System.out.println("Nenhum fornecedor cadastrado.");
+            return;
+        }
+
+        System.out.print("Digite o ID do fornecedor que deseja atualizar: ");
+        int idEditar = input.nextInt();
+        input.nextLine(); // Limpa o buffer
+
+        Fornecedor fornecedor = null;
+        for (Fornecedor f : listaFornecedor) {
+            if (f.idFornecedor == idEditar) {
+                fornecedor = f;
+                break;
+            }
+        }
+
+        if (fornecedor == null) {
+            System.out.println("Fornecedor não encontrado.");
+            return;
+        }
+
+        System.out.println("Alterando dados do fornecedor: " + fornecedor.nomeFornecedor);
+
+        ArrayList<String> edicao = new ArrayList<>();
+
+        // Atualiza o nome
+        System.out.print("Novo nome (ou enter para manter): ");
+        String novoNome = entrada.nextLine();
+        if (!novoNome.isEmpty()) {
+            edicao.add("UPDATE fornecedor SET nomeFornecedor = '" + novoNome + "' WHERE idFornecedor = " + idEditar + ";");
+            fornecedor.nomeFornecedor = novoNome;
+        }
+
+        // Atualiza o endereço
+        System.out.print("Novo endereço (ou enter para manter): ");
+        String novoEndereco = entrada.nextLine();
+        if (!novoEndereco.isEmpty()) {
+            edicao.add("UPDATE fornecedor SET endereco = '" + novoEndereco + "' WHERE idFornecedor = " + idEditar + ";");
+            fornecedor.endereco = novoEndereco;
+        }
+
+        // Atualiza o telefone
+        System.out.print("Novo telefone (ou enter para manter): ");
+        String novoTelefone = entrada.nextLine();
+        if (!novoTelefone.isEmpty()) {
+            edicao.add("UPDATE fornecedor SET telefone = '" + novoTelefone + "' WHERE idFornecedor = " + idEditar + ";");
+            fornecedor.telefone = novoTelefone;
+        }
+
+        // Executar as atualizações no banco de dados
+        if (edicao.size() > 0) {
+            for (String sql : edicao) {
+                boolean dadosAlterados = ConexaoBD.editar(sql);
+                if (!dadosAlterados) {
+                    System.out.println("Erro ao atualizar dados no banco.");
+                    return;
+                }
+            }
+            System.out.println("Dados do fornecedor atualizados com sucesso!\n");
+        } else {
+            System.out.println("Nenhuma alteração foi feita.");
+        }
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Funcionario
+
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Funcionario {
+    private int idFuncionario;
+    private String nomeFuncionario;
+    private String funcao;
+    private String telefone;
+
+    private static ArrayList<Funcionario> listaFuncionario = new ArrayList<>();
+    private static int contadorId = 1;
+    private static Scanner input = new Scanner(System.in);
+
+    public Funcionario() {
+    }
+
+    public Funcionario(String nomeFuncionario, String funcao, String telefone) {
+        this.idFuncionario = contadorId++;
+        this.nomeFuncionario = nomeFuncionario;
+        this.funcao = funcao;
+        this.telefone = telefone;
+    }
+
+    public static void cadastrarFuncionario() {
+        System.out.print("Digite o nome do funcionário: ");
+        String nomeFuncionario = input.nextLine();
+
+        System.out.print("Digite a função do funcionário: ");
+        String funcao = input.nextLine();
+
+        System.out.print("Digite o telefone do funcionário: ");
+        String telefone = input.nextLine();
+
+        Funcionario novoFuncionario = new Funcionario(nomeFuncionario, funcao, telefone);
+        listaFuncionario.add(novoFuncionario);
+
+        String sql = "INSERT INTO funcionario (nomeFuncionario, funcao, telefone) " +
+                "VALUES ('" + nomeFuncionario + "', '" + funcao + "', '" + telefone + "');";
+        System.out.println("Funcionário cadastrado com sucesso! ID: " + novoFuncionario.idFuncionario);
+
+        boolean salvo = ConexaoBD.salvar(sql);
+
+        if (salvo) {
+            System.out.println("\nFuncionário cadastrado com sucesso!\n");
+        } else {
+            System.out.println("\nProblemas ao adicionar o funcionário!\n");
+        }
+    }
+
+    public static void mostrarFuncionario() {
+        String sql = "SELECT * FROM funcionario;"; // Corrigir nome da tabela
+        ResultSet resultado = (ResultSet)  ConexaoBD.buscar(sql);
+
+        listaFuncionario = new ArrayList<>(); // Limpar lista
+        try {
+            while (resultado.next()) {
+                Funcionario funcionarioEncontrado = new Funcionario();
+                funcionarioEncontrado.idFuncionario = resultado.getInt("idFuncionario");
+                funcionarioEncontrado.nomeFuncionario = resultado.getString("nomeFuncionario");
+                funcionarioEncontrado.funcao = resultado.getString("funcao");
+                funcionarioEncontrado.telefone = resultado.getString("telefone");
+                listaFuncionario.add(funcionarioEncontrado);
+            }
+
+            System.out.println("\nFUNCIONÁRIOS CADASTRADOS:");
+
+            if (listaFuncionario.isEmpty()) {
+                System.out.println("Nenhum funcionário cadastrado.");
+            } else {
+                for (Funcionario funcionario : listaFuncionario) {
+                    System.out.println("ID: " + funcionario.idFuncionario);
+                    System.out.println("Nome: " + funcionario.nomeFuncionario);
+                    System.out.println("Função: " + funcionario.funcao);
+                    System.out.println("Telefone: " + funcionario.telefone);
+                    System.out.println("-------------------------------");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Erro ao mostrar os funcionários: " + e.getMessage());
+        }
+    }
+
+    public static void deletarFuncionario() {
+        System.out.print("Digite o ID do funcionário que você deseja deletar: ");
+        int funcionarioExcluido = input.nextInt();
+        String sql = "DELETE FROM funcionario WHERE idFuncionario = " + funcionarioExcluido; // Corrigir referência de idFornecedor para idFuncionario
+        boolean dadoExcluido = ConexaoBD.deletar(sql);
+
+        if (dadoExcluido) {
+            boolean encontrado = false;
+            for (int i = 0; i < listaFuncionario.size(); i++) {
+                if (listaFuncionario.get(i).idFuncionario == funcionarioExcluido) { // Corrigir idFornecedor para idFuncionario
+                    listaFuncionario.remove(i);
+                    System.out.println("Funcionário removido com sucesso!");
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            if (!encontrado) {
+                System.out.println("Funcionário não encontrado na lista local.");
+            }
+        } else {
+            System.out.println("Problemas ao excluir o funcionário no banco de dados!");
+        }
+    }
+
+    public static void editarFuncionario() {
+        Scanner entrada = new Scanner(System.in);
+        if (listaFuncionario.isEmpty()) {
+            System.out.println("Nenhum funcionário cadastrado.");
+            return;
+        }
+
+        System.out.print("Digite o ID do funcionário que deseja atualizar: ");
+        int idEditar = input.nextInt();
+        input.nextLine();
+
+        Funcionario funcionario = null;
+        for (Funcionario fun : listaFuncionario) { // Corrigir iteração de Fornecedor para Funcionario
+            if (fun.idFuncionario == idEditar) {
+                funcionario = fun;
+                break;
+            }
+        }
+
+        if (funcionario == null) {
+            System.out.println("Funcionário não encontrado.");
+            return;
+        }
+
+        System.out.println("Alterando dados do funcionário: " + funcionario.nomeFuncionario);
+
+        ArrayList<String> edicao = new ArrayList<>();
+
+        System.out.print("Novo nome (ou enter para manter): ");
+        String novoNome = entrada.nextLine();
+        if (!novoNome.isEmpty()) {
+            edicao.add("UPDATE funcionario SET nomeFuncionario = '" + novoNome + "' WHERE idFuncionario = " + idEditar + ";");
+            funcionario.nomeFuncionario = novoNome;
+        }
+
+        System.out.print("Nova função (ou enter para manter): ");
+        String novoFuncao = entrada.nextLine();
+        if (!novoFuncao.isEmpty()) {
+            edicao.add("UPDATE funcionario SET funcao = '" + novoFuncao + "' WHERE idFuncionario = " + idEditar + ";");
+            funcionario.funcao = novoFuncao;
+        }
+
+        System.out.print("Novo telefone (ou enter para manter): ");
+        String novoTelefone = entrada.nextLine();
+        if (!novoTelefone.isEmpty()) {
+            edicao.add("UPDATE funcionario SET telefone = '" + novoTelefone + "' WHERE idFuncionario = " + idEditar + ";");
+            funcionario.telefone = novoTelefone;
+        }
+
+        if (edicao.size() > 0) {
+            for (String sql : edicao) {
+                boolean dadosAlterados = ConexaoBD.editar(sql);
+                if (!dadosAlterados) {
+                    System.out.println("Erro ao atualizar dados no banco.");
+                    return;
+                }
+            }
+            System.out.println("Dados do funcionário atualizados com sucesso!\n");
+        } else {
+            System.out.println("Nenhuma alteração foi feita.");
+        }
+    }
+}
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+Produto
+
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Produto {
+    private int idProduto;
+    private String nomeProduto;
+    private double preco;
+    private int quantidade;
+
+    private static ArrayList<Produto> listaProduto = new ArrayList<>();
+    private static int contadorId = 1;
+    private static Scanner input = new Scanner(System.in); // Scanner corrigido
+
+    public Produto(String nomeProduto, double preco, int quantidade) {
+        this.idProduto = contadorId++;
+        this.nomeProduto = nomeProduto;
+        this.preco = preco;
+        this.quantidade = quantidade;
+    }
+
+    public static void cadastrarProduto() {
+        System.out.print("Digite o nome do produto: ");
+        String nomeProduto = input.nextLine();
+
+        System.out.print("Digite o preço do produto: ");
+        double preco = input.nextDouble();
+
+        System.out.print("Digite a quantidade do produto: ");
+        int quantidade = input.nextInt();
+        input.nextLine(); // Consumir a quebra de linha
+
+        Produto novoProduto = new Produto(nomeProduto, preco, quantidade);
+        listaProduto.add(novoProduto);
+
+        String sql = "INSERT INTO produto (nomeProduto, preco, quantidade) " +
+                "VALUES ('" + nomeProduto + "', " + preco + ", " + quantidade + ");";
+        System.out.println("Produto cadastrado com sucesso! ID: " + novoProduto.idProduto);
+
+        boolean salvo = ConexaoBD.salvar(sql);
+
+        if (salvo) {
+            System.out.println("\nProduto cadastrado com sucesso!\n");
+        } else {
+            System.out.println("\nProblemas ao adicionar o produto!\n");
+        }
+    }
+
+    public static void mostrarProduto() {
+        String sql = "SELECT * FROM produto;";
+        ResultSet resultado = ConexaoBD.buscar(sql);
+
+        listaProduto = new ArrayList<>();
+        try {
+            while (resultado.next()) {
+                Produto produtoEncontrado = new Produto(
+                        resultado.getString("nomeProduto"),
+                        resultado.getDouble("preco"),
+                        resultado.getInt("quantidade")
+                );
+                produtoEncontrado.idProduto = resultado.getInt("idProduto");
+                listaProduto.add(produtoEncontrado);
+            }
+
+            System.out.println("\nPRODUTOS CADASTRADOS:");
+
+            if (listaProduto.isEmpty()) {
+                System.out.println("Nenhum produto cadastrado.");
+            } else {
+                for (Produto produto : listaProduto) {
+                    System.out.println("ID: " + produto.idProduto);
+                    System.out.println("Nome: " + produto.nomeProduto);
+                    System.out.println("Preço: " + produto.preco);
+                    System.out.println("Quantidade: " + produto.quantidade);
+                    System.out.println("-------------------------------");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Erro ao mostrar os produtos: " + e.getMessage());
+        }
+    }
+
+    public static void deletarProduto() {
+        System.out.print("Digite o ID do produto que você deseja deletar: ");
+        int produtoExcluido = input.nextInt();
+        input.nextLine(); // Consumir a quebra de linha
+
+        String sql = "DELETE FROM produto WHERE idProduto = " + produtoExcluido;
+        boolean dadoExcluido = ConexaoBD.deletar(sql);
+
+        if (dadoExcluido) {
+            boolean encontrado = false;
+            for (int i = 0; i < listaProduto.size(); i++) {
+                if (listaProduto.get(i).idProduto == produtoExcluido) {
+                    listaProduto.remove(i);
+                    System.out.println("Produto removido com sucesso!");
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            if (!encontrado) {
+                System.out.println("Produto não encontrado na lista local.");
+            }
+        } else {
+            System.out.println("Problemas ao excluir o produto no banco de dados!");
+        }
+    }
+
+    public static void editarProduto() {
+        if (listaProduto.isEmpty()) {
+            System.out.println("Nenhum produto cadastrado.");
+            return;
+        }
+
+        System.out.print("Digite o ID do produto que deseja atualizar: ");
+        int idEditar = input.nextInt();
+        input.nextLine();
+
+        Produto produto = null;
+        for (Produto p : listaProduto) {
+            if (p.idProduto == idEditar) {
+                produto = p;
+                break;
+            }
+        }
+
+        if (produto == null) {
+            System.out.println("Produto não encontrado.");
+            return;
+        }
+
+        System.out.println("Alterando dados do produto: " + produto.nomeProduto);
+
+        ArrayList<String> edicao = new ArrayList<>();
+
+        System.out.print("Novo nome (ou enter para manter): ");
+        String novoNome = input.nextLine();
+        if (!novoNome.isEmpty()) {
+            edicao.add("UPDATE produto SET nomeProduto = '" + novoNome + "' WHERE idProduto = " + idEditar + ";");
+            produto.nomeProduto = novoNome;
+        }
+
+        System.out.print("Novo preço (ou enter para manter): ");
+        String novoPrecoStr = input.nextLine();
+        if (!novoPrecoStr.isEmpty()) {
+            double novoPreco = Double.parseDouble(novoPrecoStr);
+            edicao.add("UPDATE produto SET preco = " + novoPreco + " WHERE idProduto = " + idEditar + ";");
+            produto.preco = novoPreco;
+        }
+
+        System.out.print("Nova quantidade (ou enter para manter): ");
+        String novaQuantidadeStr = input.nextLine();
+        if (!novaQuantidadeStr.isEmpty()) {
+            int novaQuantidade = Integer.parseInt(novaQuantidadeStr);
+            edicao.add("UPDATE produto SET quantidade = " + novaQuantidade + " WHERE idProduto = " + idEditar + ";");
+            produto.quantidade = novaQuantidade;
+        }
+
+        if (!edicao.isEmpty()) {
+            for (String sql : edicao) {
+                boolean dadosAlterados = ConexaoBD.editar(sql);
+                if (!dadosAlterados) {
+                    System.out.println("Erro ao atualizar dados no banco.");
+                    return;
+                }
+            }
+            System.out.println("Dados do produto atualizados com sucesso!\n");
+        } else {
+            System.out.println("Nenhuma alteração foi feita.");
+        }
+    }
+}
+
+---------------------------------------------------------------------------------------------------------------------
+
+Conexao BD
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ConexaoBD {
+    private static final String URL = "jdbc:mysql://127.0.0.1:3306/A3";
+    private static final String USER = "root";
+    private static final String PASSWORD = "123321678";
+    private static Connection conexao = null;
+
+    // Método para conectar ao banco de dados
+    public static Connection conectar() {
+        try {
+            if (conexao == null || conexao.isClosed()) {
+                conexao = DriverManager.getConnection(URL, USER, PASSWORD);
+                System.out.println("Conexão estabelecida com sucesso!");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao conectar ao banco de dados: " + e.getMessage());
+        }
+        return conexao;
+    }
+
+    // Método para buscar dados do banco (modificado para retornar ResultSet)
+    public static ResultSet buscar(String sql) {
+        ResultSet resultado = null;
+        try {
+            Connection conexao = conectar();
+            if (conexao != null) {
+                PreparedStatement stmt = conexao.prepareStatement(sql);
+                resultado = stmt.executeQuery();
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao buscar dados: " + e.getMessage());
+        }
+        return resultado;
+    }
+
+    // Outros métodos para salvar, editar e deletar dados no banco
+    public static boolean salvar(String sql) {
+        try (Connection conexao = conectar();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Erro ao salvar dados: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean editar(String sql) {
+        return salvar(sql); // Reutiliza o método de salvar com SQL de atualização
+    }
+
+    public static boolean deletar(String sql) {
+        return salvar(sql); // Reutiliza o método de salvar com SQL de deleção
+    }
+}
+
